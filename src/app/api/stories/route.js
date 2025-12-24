@@ -2,19 +2,24 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
-  try {
-    const stories = await prisma.story.findMany({
-      include: {
-        source: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const tag = searchParams.get('tag');
 
-    return Response.json(stories);
-  } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+  let where = {};
+  if (tag) {
+    where = {
+      tags: {
+        hasSome: [tag]
+      }
+    };
   }
+
+  const stories = await prisma.story.findMany({
+    where,
+    include: { source: true },
+    orderBy: { createdAt: 'desc' }
+  });
+  
+  return Response.json(stories);
 }

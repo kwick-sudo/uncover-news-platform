@@ -19,6 +19,7 @@ model Story {
   upvotes   Int     @default(0)
   downvotes Int     @default(0)
   clicks    Int     @default(0)
+isCommunityPick   Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
